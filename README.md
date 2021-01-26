@@ -17,6 +17,6 @@ Technology included
 
 Note : add your own API key for Goole maps
 ScreenShots : 
-http://www.vancura.cz/programing/Android/Apps/demo/WeatherWidget/device-2021-01-26-114226.png
-http://www.vancura.cz/programing/Android/Apps/demo/WeatherWidget/device-2021-01-26-114252.png
-http://www.vancura.cz/programing/Android/Apps/demo/WeatherWidget/device-2021-01-26-114305.png
+http://www.vancura.cz/programing/Android/Demo/WeatherWidget/device-2021-01-26-114226.png
+http://www.vancura.cz/programing/Android/Demo/WeatherWidget/device-2021-01-26-114252.png
+http://www.vancura.cz/programing/Android/Demo/WeatherWidget/device-2021-01-26-114305.png
