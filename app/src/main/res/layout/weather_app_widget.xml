@@ -1,0 +1,217 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/divider"
+    android:padding="@dimen/widget_margin"
+    android:id="@+id/widgetLayout">
+
+    <TextView
+        android:id="@+id/appwidget_text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="From which Service"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_size"
+        android:textStyle="bold"
+        android:visibility="gone"/>
+
+
+    <TextView
+        android:id="@+id/appwidget_text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/appwidget_text1"
+        android:layout_margin="8dp"
+        android:text="Last refresh time"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_size" />
+
+    <TextView
+        android:id="@+id/appwidget_text3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/appwidget_text2"
+        android:layout_margin="8dp"
+        android:text="GPS Layt, Lon, Time"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_size" />
+
+    <TextView
+        android:id="@+id/appwidget_text4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/appwidget_text3"
+        android:layout_margin="8dp"
+        android:text="GeoCoding"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_size" />
+
+
+    <TextView
+        android:id="@+id/appwidget_text5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/appwidget_text4"
+        android:layout_margin="8dp"
+        android:text="Weather status"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_size"
+        android:visibility="gone"/>
+
+    <!-- Weather pool -->
+    <LinearLayout
+        android:id="@+id/weatherLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/appwidget_text5">
+
+        <!-- Weather now -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/appwidget_text_now_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="NOW"
+                android:layout_gravity="center"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/text_size"/>
+
+            <TextView
+                android:id="@+id/appwidget_text_now"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Weather now"
+                android:layout_gravity="center"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/text_size"/>
+
+            <TextView
+                android:id="@+id/appwidget_text_nowC"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="°C"
+                android:layout_gravity="center"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/text_size" />
+
+            <ImageView
+                android:id="@+id/imageView_now"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                tools:srcCompat="@tools:sample/avatars" />
+
+        </LinearLayout>
+
+        <!-- Weather hour +2  -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/appwidget_text_h2_titlet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="+2 HOURS"
+                android:layout_gravity="center"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/text_size"/>
+
+            <TextView
+                android:id="@+id/appwidget_text_h2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Weather h+2"
+                android:layout_gravity="center"
+                android:textColor="@color/colorText"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/appwidget_text_h2C"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="°C"
+                android:layout_gravity="center"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/text_size" />
+
+
+            <ImageView
+                android:id="@+id/imageView_h2"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                tools:srcCompat="@tools:sample/avatars" />
+
+        </LinearLayout>
+
+        <!-- Weather hour +4  -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/appwidget_text_h4_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="+4 HOURS"
+                android:layout_gravity="center"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/text_size" />
+
+            <TextView
+                android:id="@+id/appwidget_text_h4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Weather h+4"
+                android:layout_gravity="center"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/text_size" />
+
+            <TextView
+                android:id="@+id/appwidget_text_h4C"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="°C"
+                android:layout_gravity="center"
+                android:textColor="@color/colorText"
+                android:textSize="15sp" />
+
+            <ImageView
+                android:id="@+id/imageView_h4"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                tools:srcCompat="@tools:sample/avatars" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+
+</RelativeLayout>

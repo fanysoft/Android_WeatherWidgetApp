@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">WeatherWidget</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+
+    <string name="menu_statistics">Statistics</string>
+    <string name="title_activity_maps">Statistics - Places visited</string>
+    <string name="mainLayoutAbout">This app provides Widget only, Please place Widget to home screen and accept Permission. Once data collected, you can see visited locations in Menu - Statistics</string>
+
+</resources>
