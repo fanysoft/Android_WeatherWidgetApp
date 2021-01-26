@@ -16,6 +16,10 @@
 
     Once you have your key (it starts with "AIza"), replace the "google_maps_key"
     string in this file.
+
+
+
+    // TODO hide api key from GitHub
     -->
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyC6BGoC1FWgbvNv_yVk3BFQGN8s8hoSbOA</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">foo</string>
 </resources>
