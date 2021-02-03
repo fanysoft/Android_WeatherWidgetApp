@@ -20,7 +20,7 @@ public class RetrofitWeatherRepo {
 
     public static List<MyWeahterPOJO> myWeahterList = new ArrayList<>();
 
-    // TODO hide OpenWeather API key form GitHub
+    // API key is saved in user gradle.properties to not expose it at GitHub
     static final String OpenWeatherApiKey = BuildConfig.myAPIkeyWeather;
     static String units = "metric";
 
