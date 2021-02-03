@@ -210,11 +210,6 @@ public class MyService extends IntentService implements OnLocationInterface, Ret
                         }
                     });
                     retrofitWeatherRepo.RetrofitWeatherAsync(GPSLatitude, GPSLongtitude, context);
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 1st from local
                 }
 
                 @Override

@@ -68,6 +68,7 @@ public class MyForeGroundService extends Service {
     Intent intentGlobal;
     Context context;
     private boolean jobCancelled = false;
+    private static Boolean isOnline;
 
     RemoteViews remoteViews;
     AppWidgetManager appWidgetManager;
@@ -152,6 +153,10 @@ public class MyForeGroundService extends Service {
 
                     // we have work to do
 
+                    // internet check
+                    isOnline = HelperMethods.isOnlineTest(context);
+                    Log.d(TAG, "internet connection status =" + isOnline);
+
                     // Check permission
                     if (HelperMethods.CheckPerm(context)){
 
@@ -170,106 +175,119 @@ public class MyForeGroundService extends Service {
 
                                 StringToWidgetGPS = "GPS " + GPSLatitude + ", " + GPSLongtitude + ", " + ConvertEPOCHTime(GPSTime);
 
-                                // Call Retrofit to get Geocoding translation
-                                // Method is Async with callback
-                                Log.d(TAG, "Service calling for Geocoding translation ..");
-                                retrofitRepoGeoLocation = new RetrofitGeoCodingRepo(new RetrofitGeoCodingInterface() {
-                                    @Override
-                                    public void OnRetrofitCompleted() {
 
-                                        Log.d(TAG, "OnRetrofitCompleted - geoCoding data are ready");
+                                if (isOnline) {
 
-                                        StringToWidgetGeoloc = GeoLocationResult;
+                                    // Call Retrofit to get Geocoding translation
+                                    // Method is Async with callback
+                                    Log.d(TAG, "Service calling for Geocoding translation ..");
+                                    retrofitRepoGeoLocation = new RetrofitGeoCodingRepo(new RetrofitGeoCodingInterface() {
+                                        @Override
+                                        public void OnRetrofitCompleted() {
 
-                                        // dB room - insert
-                                        Log.d(TAG, "inserting data do room db ..");
-                                        LocationRepository locationRepository = new LocationRepository(context, new ReadAsyncTaskInterface() {
-                                            @Override
-                                            public void onTaskCompleted() {
-                                                // none - callback is needed for read from dB only
-                                            }
-                                        });
-                                        locationRepository.insertLocation(new Location(GPSLatitude, GPSLongtitude,StringToWidgetGeoloc));
+                                            Log.d(TAG, "OnRetrofitCompleted - geoCoding data are ready");
 
-                                        // db - check after insert - read id - only for debug
-                                        locationRepository.getLocations();
+                                            StringToWidgetGeoloc = GeoLocationResult;
 
-                                        // refresh Widget
-                                        UpdateWidgetGUI();
+                                            // dB room - insert
+                                            Log.d(TAG, "inserting data do room db ..");
+                                            LocationRepository locationRepository = new LocationRepository(context, new ReadAsyncTaskInterface() {
+                                                @Override
+                                                public void onTaskCompleted() {
+                                                    // none - callback is needed for read from dB only
+                                                }
+                                            });
+                                            locationRepository.insertLocation(new Location(GPSLatitude, GPSLongtitude, StringToWidgetGeoloc));
 
-                                    }
+                                            // db - check after insert - read id - only for debug
+                                            locationRepository.getLocations();
 
-                                    @Override
-                                    public void OnRetrofitError(String error) {
-
-                                        StringToWidgetGeoloc = "GeoCoding ERROR " + error;
-
-                                        // dB room - insert
-                                        Log.d(TAG, "inserting data do room db ..");
-                                        LocationRepository locationRepository = new LocationRepository(context, new ReadAsyncTaskInterface() {
-                                            @Override
-                                            public void onTaskCompleted() {
-                                                // none - callback is needed for read from dB only
-                                            }
-                                        });
-                                        locationRepository.insertLocation(new Location(GPSLatitude, GPSLongtitude,StringToWidgetGeoloc));
-
-                                        // db - check after insert - read id - only for debug
-                                        locationRepository.getLocations();
-
-                                        // refresh Widget
-                                        UpdateWidgetGUI();
-                                    }
-                                });
-                                retrofitRepoGeoLocation.RetrofitGeoTranlateAsyns(GPSLatitude, GPSLongtitude, context);
-
-
-                                // Call Retrofit to get Weather
-                                // Method is Async with callback
-                                Log.d(TAG, "Service calling for Weather data ..");
-                                retrofitWeatherRepo = new RetrofitWeatherRepo(new RetrofitWeatherInterface() {
-                                    @Override
-                                    public void OnRetrofitCompleted() {
-
-                                        Log.d(TAG, "OnRetrofitCompleted - weather data are ready");
-
-                                        StringToWidgetWeatherStatus = "OK";
-
-                                        for (int i=0; i<3; i++){
-
-                                            // weather
-                                            String StringWeatherSmallLetter = myWeahterList.get(i).getWeatherDescCurrent();
-                                            String StringWeatherBigLetter = StringWeatherSmallLetter.substring(0, 1).toUpperCase() + StringWeatherSmallLetter.substring(1);
-                                            StringToWidgetWeatherList.add(StringWeatherBigLetter);
-
-                                            // celsius
-                                            String StringCelsius = Math.round(myWeahterList.get(i).getTempCurrent()) +"°C";
-                                            StringToWidgetWeatherCelsiusList.add(StringCelsius);
-
-                                            // icon
-                                            String IconUrl = myWeahterList.get(i).getIconUrl();
-                                            IconToWidgetWeatherList.add(IconUrl);
-
-                                            Log.d(TAG, "loop " + i + StringWeatherBigLetter + " " + StringCelsius + " " + IconUrl);
+                                            // refresh Widget
+                                            UpdateWidgetGUI();
 
                                         }
 
-                                        // refresh Widget
-                                        UpdateWidgetGUI();
+                                        @Override
+                                        public void OnRetrofitError(String error) {
 
-                                    }
+                                            StringToWidgetGeoloc = "GeoCoding ERROR " + error;
 
-                                    @Override
-                                    public void OnRetrofitError(String error) {
+                                            // dB room - insert
+                                            Log.d(TAG, "inserting data do room db ..");
+                                            LocationRepository locationRepository = new LocationRepository(context, new ReadAsyncTaskInterface() {
+                                                @Override
+                                                public void onTaskCompleted() {
+                                                    // none - callback is needed for read from dB only
+                                                }
+                                            });
+                                            locationRepository.insertLocation(new Location(GPSLatitude, GPSLongtitude, StringToWidgetGeoloc));
 
-                                        StringToWidgetWeatherStatus = "Weather ERROR " + error;
+                                            // db - check after insert - read id - only for debug
+                                            locationRepository.getLocations();
 
-                                        // refresh Widget
-                                        UpdateWidgetGUI();
-                                    }
-                                });
-                                retrofitWeatherRepo.RetrofitWeatherAsync(GPSLatitude, GPSLongtitude, context);
+                                            // refresh Widget
+                                            UpdateWidgetGUI();
+                                        }
+                                    });
+                                    retrofitRepoGeoLocation.RetrofitGeoTranlateAsyns(GPSLatitude, GPSLongtitude, context);
+                                } else {
+                                    StringToWidgetGeoloc = "ERROR - no internet - unable to get GeoCoding";
+                                    // refresh Widget
+                                    UpdateWidgetGUI();
+                                }
 
+                                if (isOnline) {
+
+                                    // Call Retrofit to get Weather
+                                    // Method is Async with callback
+                                    Log.d(TAG, "Service calling for Weather data ..");
+                                    retrofitWeatherRepo = new RetrofitWeatherRepo(new RetrofitWeatherInterface() {
+                                        @Override
+                                        public void OnRetrofitCompleted() {
+
+                                            Log.d(TAG, "OnRetrofitCompleted - weather data are ready");
+
+                                            StringToWidgetWeatherStatus = "OK";
+
+                                            for (int i = 0; i < 3; i++) {
+
+                                                // weather
+                                                String StringWeatherSmallLetter = myWeahterList.get(i).getWeatherDescCurrent();
+                                                String StringWeatherBigLetter = StringWeatherSmallLetter.substring(0, 1).toUpperCase() + StringWeatherSmallLetter.substring(1);
+                                                StringToWidgetWeatherList.add(StringWeatherBigLetter);
+
+                                                // celsius
+                                                String StringCelsius = Math.round(myWeahterList.get(i).getTempCurrent()) + "°C";
+                                                StringToWidgetWeatherCelsiusList.add(StringCelsius);
+
+                                                // icon
+                                                String IconUrl = myWeahterList.get(i).getIconUrl();
+                                                IconToWidgetWeatherList.add(IconUrl);
+
+                                                Log.d(TAG, "loop " + i + StringWeatherBigLetter + " " + StringCelsius + " " + IconUrl);
+
+                                            }
+
+                                            // refresh Widget
+                                            UpdateWidgetGUI();
+
+                                        }
+
+                                        @Override
+                                        public void OnRetrofitError(String error) {
+
+                                            StringToWidgetWeatherStatus = "Weather ERROR " + error;
+
+                                            // refresh Widget
+                                            UpdateWidgetGUI();
+                                        }
+                                    });
+                                    retrofitWeatherRepo.RetrofitWeatherAsync(GPSLatitude, GPSLongtitude, context);
+                                }else{
+                                    StringToWidgetWeatherStatus = "ERROR - no internet - unable to get Weather data";
+                                    // refresh Widget
+                                    UpdateWidgetGUI();
+                                }
 
                             }
 

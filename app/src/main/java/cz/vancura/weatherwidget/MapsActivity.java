@@ -40,7 +40,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         context = getApplicationContext();
 
-        // TODO add internet check
+        // TODO hide secret key from google_maps_api.xml from GitHub
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);

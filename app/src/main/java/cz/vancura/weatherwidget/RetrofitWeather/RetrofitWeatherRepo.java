@@ -8,6 +8,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.vancura.weatherwidget.BuildConfig;
 import cz.vancura.weatherwidget.Helper.HelperMethods;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,8 +19,9 @@ public class RetrofitWeatherRepo {
     private static final String TAG = "myTAG-RetrofitWeatherRepo";
 
     public static List<MyWeahterPOJO> myWeahterList = new ArrayList<>();
-    
-    static final String ApiKey = "3bb0b846b54199e0bb7cbb55f8875c61";
+
+    // TODO hide OpenWeather API key form GitHub
+    static final String OpenWeatherApiKey = BuildConfig.myAPIkeyWeather;
     static String units = "metric";
 
     // listener
@@ -35,7 +37,7 @@ public class RetrofitWeatherRepo {
         RetrofitWeatherAPIInterface apiInterface = RetrofitWeatherAPIClient.getClient().create(RetrofitWeatherAPIInterface.class);
 
         // Retrofit call
-        Call<RetrofitWeatherPOJO> call = apiInterface.doGetWeather(Lat, Lon, ApiKey, units);
+        Call<RetrofitWeatherPOJO> call = apiInterface.doGetWeather(Lat, Lon, OpenWeatherApiKey, units);
         call.enqueue(new Callback<RetrofitWeatherPOJO>() {
             @SuppressLint("LongLogTag")
             @Override

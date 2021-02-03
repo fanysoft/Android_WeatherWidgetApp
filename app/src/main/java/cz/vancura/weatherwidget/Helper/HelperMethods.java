@@ -5,6 +5,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,6 +27,21 @@ public class HelperMethods {
     public static double GPSLatitude = 0;
     public static double GPSLongtitude = 0;
     public static double GPSTime = 0;
+
+
+    // test internet connection
+    public static boolean isOnlineTest(Context context) {
+
+        // Connection status - Google recommended
+        // https://developer.android.com/training/monitoring-device-state/connectivity-status-type
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        boolean result = netInfo != null && netInfo.isConnectedOrConnecting();
+        Log.d(TAG, "isOnlineTest() returns result2=" + result);
+
+        return result;
+    }
+
 
 
     // listener
