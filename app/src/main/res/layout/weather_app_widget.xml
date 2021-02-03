@@ -84,7 +84,12 @@
                 android:layout_margin="8dp"
                 android:text="NOW"
                 android:layout_gravity="center"
+<<<<<<< HEAD
                 android:textColor="@color/colorText"
+=======
+                android:textAlignment="center"
+                android:textColor="@color/accent"
+>>>>>>> 1st from local
                 android:textSize="@dimen/text_size"/>
 
             <TextView
@@ -93,6 +98,10 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:text="Weather now"
+<<<<<<< HEAD
+=======
+                android:textAlignment="center"
+>>>>>>> 1st from local
                 android:layout_gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/text_size"/>
@@ -129,8 +138,14 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:text="+2 HOURS"
+<<<<<<< HEAD
                 android:layout_gravity="center"
                 android:textColor="@color/colorText"
+=======
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                android:textColor="@color/accent"
+>>>>>>> 1st from local
                 android:textSize="@dimen/text_size"/>
 
             <TextView
@@ -139,6 +154,10 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:text="Weather h+2"
+<<<<<<< HEAD
+=======
+                android:textAlignment="center"
+>>>>>>> 1st from local
                 android:layout_gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="15sp" />
@@ -176,8 +195,14 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:text="+4 HOURS"
+<<<<<<< HEAD
                 android:layout_gravity="center"
                 android:textColor="@color/colorText"
+=======
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                android:textColor="@color/accent"
+>>>>>>> 1st from local
                 android:textSize="@dimen/text_size" />
 
             <TextView
@@ -186,6 +211,10 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:text="Weather h+4"
+<<<<<<< HEAD
+=======
+                android:textAlignment="center"
+>>>>>>> 1st from local
                 android:layout_gravity="center"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/text_size" />
