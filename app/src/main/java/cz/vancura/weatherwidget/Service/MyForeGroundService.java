@@ -40,7 +40,7 @@ import cz.vancura.weatherwidget.model.Location;
 import cz.vancura.weatherwidget.model.roomdb.LocationRepository;
 import cz.vancura.weatherwidget.model.roomdb.ReadAsyncTaskInterface;
 
-import static cz.vancura.weatherwidget.Helper.HelperMethods.ConvertEPOCHTime;
+import static cz.vancura.weatherwidget.Helper.HelperMethods.ConvertEPOCHTimeDouble;
 import static cz.vancura.weatherwidget.Helper.HelperMethods.GPSLatitude;
 import static cz.vancura.weatherwidget.Helper.HelperMethods.GPSLongtitude;
 import static cz.vancura.weatherwidget.Helper.HelperMethods.GPSTime;
@@ -173,7 +173,7 @@ public class MyForeGroundService extends Service {
 
                                 Log.d(TAG, "onLocationCompleted");
 
-                                StringToWidgetGPS = "GPS " + GPSLatitude + ", " + GPSLongtitude + ", " + ConvertEPOCHTime(GPSTime);
+                                StringToWidgetGPS = "GPS " + GPSLatitude + ", " + GPSLongtitude + ", " + ConvertEPOCHTimeDouble(GPSTime);
 
 
                                 if (isOnline) {
@@ -190,17 +190,7 @@ public class MyForeGroundService extends Service {
                                             StringToWidgetGeoloc = GeoLocationResult;
 
                                             // dB room - insert
-                                            Log.d(TAG, "inserting data do room db ..");
-                                            LocationRepository locationRepository = new LocationRepository(context, new ReadAsyncTaskInterface() {
-                                                @Override
-                                                public void onTaskCompleted() {
-                                                    // none - callback is needed for read from dB only
-                                                }
-                                            });
-                                            locationRepository.insertLocation(new Location(GPSLatitude, GPSLongtitude, StringToWidgetGeoloc));
-
-                                            // db - check after insert - read id - only for debug
-                                            locationRepository.getLocations();
+                                            InsertToRoom(context, GPSLatitude, GPSLongtitude, StringToWidgetGeoloc);
 
                                             // refresh Widget
                                             UpdateWidgetGUI();
@@ -213,17 +203,7 @@ public class MyForeGroundService extends Service {
                                             StringToWidgetGeoloc = "GeoCoding ERROR " + error;
 
                                             // dB room - insert
-                                            Log.d(TAG, "inserting data do room db ..");
-                                            LocationRepository locationRepository = new LocationRepository(context, new ReadAsyncTaskInterface() {
-                                                @Override
-                                                public void onTaskCompleted() {
-                                                    // none - callback is needed for read from dB only
-                                                }
-                                            });
-                                            locationRepository.insertLocation(new Location(GPSLatitude, GPSLongtitude, StringToWidgetGeoloc));
-
-                                            // db - check after insert - read id - only for debug
-                                            locationRepository.getLocations();
+                                            InsertToRoom(context, GPSLatitude, GPSLongtitude, "geoCodingError");
 
                                             // refresh Widget
                                             UpdateWidgetGUI();
@@ -232,6 +212,10 @@ public class MyForeGroundService extends Service {
                                     retrofitRepoGeoLocation.RetrofitGeoTranlateAsyns(GPSLatitude, GPSLongtitude, context);
                                 } else {
                                     StringToWidgetGeoloc = "ERROR - no internet - unable to get GeoCoding";
+
+                                    // dB room - insert
+                                    InsertToRoom(context, GPSLatitude, GPSLongtitude, "offlineError");
+
                                     // refresh Widget
                                     UpdateWidgetGUI();
                                 }
@@ -305,7 +289,6 @@ public class MyForeGroundService extends Service {
                         helperMethods.GetLocationAsync(context);
 
 
-
                     }else{
                         // not granted
                         Log.d(TAG, "Permission not granted - will ask user to grand it now ..");
@@ -343,11 +326,16 @@ public class MyForeGroundService extends Service {
             remoteViews = new RemoteViews(this.getApplicationContext().getPackageName(), R.layout.weather_app_widget);
 
             long currentTime = System.currentTimeMillis();
-            String currentTimeString = ConvertEPOCHTime(currentTime);
+            String currentTimeString = HelperMethods.ConvertEPOCHTimeLong(currentTime);
 
             Log.d(TAG, "updating widget GUI ..");
 
-            // nadpis
+
+            // TODO ERROR - always when user unlock device after long sleep
+            // can be hadled - show Error only after some time - like if it does not dissapear after 1hour from wake-up or so
+
+
+            // title
             remoteViews.setTextViewText(R.id.appwidget_text1, "MyForegroundService");
             // last refresh time
             remoteViews.setTextViewText(R.id.appwidget_text2, "Last widget refresh = " + currentTimeString);
@@ -444,7 +432,6 @@ public class MyForeGroundService extends Service {
             }
 
 
-
             // Register an onClickListener
             Intent clickIntent = new Intent(this.getApplicationContext(), WeatherAppWidget.class);
 
@@ -509,6 +496,23 @@ public class MyForeGroundService extends Service {
         return notification;
     }
 
+
+    private static void InsertToRoom(Context context, double GPSLatitude, double GPSLongtitude, String geoCoding){
+
+        Log.d(TAG, "inserting data do room db ..");
+        LocationRepository locationRepository = new LocationRepository(context, new ReadAsyncTaskInterface() {
+            @Override
+            public void onTaskCompleted() {
+                // none - callback is needed for read from dB only
+            }
+        });
+        locationRepository.insertLocation(new Location(GPSLatitude, GPSLongtitude, geoCoding, HelperMethods.GetCurrentDate()));
+
+        // db - check after insert - read id - only for debug
+        locationRepository.getLocations();
+
+
+    }
 
 
 }

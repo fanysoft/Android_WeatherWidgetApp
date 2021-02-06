@@ -7,6 +7,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.vancura.weatherwidget.Helper.HelperMethods;
 import cz.vancura.weatherwidget.model.Location;
 
 import static cz.vancura.weatherwidget.MainActivity.MainActivityIsActive;
@@ -70,7 +71,7 @@ public class LocationRepository {
 
                 int i = 0;
                 for (Location location : locations) {
-                    Log.d(TAG, "Room dB - looping locations in dB item=" + i + " " +location.getGPSlat() + " " + location.getGPSlon() + " " + location.getGeoCoding());
+                    Log.d(TAG, "Room dB - looping locations in dB item=" + i + " " +location.getGPSlat() + " " + location.getGPSlon() + " " + location.getGeoCoding() + " " + location.getGeoDate() + " " + HelperMethods.ConvertEPOCHTimeLong(location.getGeoDate()));
                     i++;
                 }
 

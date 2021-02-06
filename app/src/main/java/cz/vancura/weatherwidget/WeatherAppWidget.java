@@ -41,7 +41,7 @@ public class WeatherAppWidget extends AppWidgetProvider{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             Log.d(TAG, "For Android 8.0 and newer devices - startForegroundService ..");
-            Toast.makeText(context, "Launching ForegroundService..", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Launching ForegroundService..", Toast.LENGTH_SHORT).show();
 
             // Build the intent to call the foreground service
             Intent intent = new Intent(context.getApplicationContext(), MyForeGroundService.class);
@@ -52,7 +52,7 @@ public class WeatherAppWidget extends AppWidgetProvider{
         } else {
 
             Log.d(TAG, "For Android lower than 8.0 devices - startService ..");
-            Toast.makeText(context, "Launching Service..", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Launching Service..", Toast.LENGTH_SHORT).show();
 
             // Build the intent to call the service
             Intent intent = new Intent(context.getApplicationContext(), MyService.class);

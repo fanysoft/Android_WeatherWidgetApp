@@ -18,16 +18,73 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
 
 public class HelperMethods {
 
     private static final String TAG = "myTAG-HelperMethods";
+
     public static double GPSLatitude = 0;
     public static double GPSLongtitude = 0;
     public static double GPSTime = 0;
 
+
+    // return current date in EPOCH format
+    public static Long GetCurrentDate(){
+        long result =  System.currentTimeMillis();
+        // Log.d(TAG,"GetCurrentDate returns " + result); // example 1612609188428
+        return result;
+    }
+
+    // convert Epoch time to Human readable Date Time - from Long
+    public static String ConvertEPOCHTimeLong(Long input){
+
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.GERMAN);
+        String result = format.format(input);
+        Log.d(TAG,"ConvertEPOCHTime returns " + result);
+        return result;
+    }
+
+    // Convert EPOCH Linux time to Human readable - from double
+    public static String ConvertEPOCHTimeDouble(double inTime){
+
+        Date date = new Date((long) inTime);
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.GERMANY);
+        String outTime = dateFormat.format(date);
+
+        return  outTime;
+
+    }
+
+
+    // according to timestamp - judge how old it is - for icon color in map
+    public static int JudgeAge(Long dateInput){
+
+        int result = 0;
+
+        long dateNow = GetCurrentDate();
+        long diff = dateNow - dateInput;
+        Log.d(TAG, "JudgeAge - diff=" + diff);
+
+        // 1 Day = 86,400,000 Milliseconds
+        // 7 Days = 604,800,000 Milliseconds
+        if (diff < 86400000){
+            // it is less than 1 day old
+            result = 1;
+        }else if(diff < 604800000){
+            // it is max 1 week old
+            result = 2;
+        }else{
+            // it is older than 1 weel
+            result = 3;
+        }
+
+        Log.d(TAG, "JudgeAge - result=" + result);
+        return result;
+
+    }
 
     // test internet connection
     public static boolean isOnlineTest(Context context) {
@@ -43,11 +100,10 @@ public class HelperMethods {
     }
 
 
-
-    // listener
+    // listener for Location
     private static OnLocationInterface onLocationInterface;
 
-    // constructor with listener
+    // constructor with Location listener
     public HelperMethods(OnLocationInterface onLocationInterface) {
         this.onLocationInterface = onLocationInterface;
     }
@@ -96,18 +152,6 @@ public class HelperMethods {
     }
 
 
-    // Convert EPOCH Linux time to Human readable
-    public static String ConvertEPOCHTime(double inTime){
-
-        Date date = new Date((long) inTime);
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.GERMANY);
-        String outTime = dateFormat.format(date);
-
-        return  outTime;
-
-    }
-
-
     // OpenWeather.org icon set
     public static String GiveMeIcon(String input) {
 
@@ -145,7 +189,6 @@ public class HelperMethods {
         Log.d(TAG, "GiveMeIcon - input=" + input + " output=" + url);
         return url;
     }
-
 
     // Check permission
     public static Boolean CheckPerm(Context context) {

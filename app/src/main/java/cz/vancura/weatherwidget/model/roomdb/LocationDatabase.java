@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase;
 
 import cz.vancura.weatherwidget.model.Location;
 
-@Database(entities = {Location.class}, version = 2)
+@Database(entities = {Location.class}, version = 3)
 public abstract class LocationDatabase extends RoomDatabase {
 
     public abstract LocationDao locationDao();

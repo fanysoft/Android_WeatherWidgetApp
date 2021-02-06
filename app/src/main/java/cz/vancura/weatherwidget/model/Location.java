@@ -19,11 +19,23 @@ public class Location {
     @ColumnInfo(name = "GeoCoding")
     String GeoCoding;
 
+    @ColumnInfo(name = "GeoDate")
+    long GeoDate;
 
-    public Location(double GPSlat, double GPSlon, String GeoCoding) {
+
+    public Location(double GPSlat, double GPSlon, String GeoCoding, long GeoDate) {
         this.GPSlat = GPSlat;
         this.GPSlon = GPSlon;
         this.GeoCoding = GeoCoding;
+        this.GeoDate = GeoDate;
+    }
+
+    public long getGeoDate() {
+        return GeoDate;
+    }
+
+    public void setGeoDate(long geoDate) {
+        GeoDate = geoDate;
     }
 
     public int getId() {

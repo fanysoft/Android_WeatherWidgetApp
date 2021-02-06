@@ -12,11 +12,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 
+import cz.vancura.weatherwidget.Helper.HelperMethods;
 import cz.vancura.weatherwidget.model.Location;
 import cz.vancura.weatherwidget.model.roomdb.LocationRepository;
 import cz.vancura.weatherwidget.model.roomdb.ReadAsyncTaskInterface;
@@ -55,8 +58,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap = googleMap;
 
-
-        // Load data from RoomDB to locationList - Async
+        // Load data from RoomDB to locationList - Async with callback
         LocationRepository locationRepository = new LocationRepository(this, new ReadAsyncTaskInterface() {
             @Override
             public void onTaskCompleted() {
@@ -71,25 +73,55 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     int i = 0;
                     for (Location location : locationList) {
 
-                        Log.d(TAG, "Adding point to map item=" + i + " " +location.getGPSlat() + " " + location.getGPSlon() + " " + location.getGeoCoding());
-
                         LatLng point = new LatLng(location.getGPSlat(), location.getGPSlon());
-                        String descr = location.getGeoCoding();
-                        if (location.getGeoCoding().contains("Error") || location.getGeoCoding().contains("ERROR")) {
-                            descr = "Missing GeoCoding";
+                        String geoCoding = location.getGeoCoding();
+                        if (geoCoding.contains("Error") || geoCoding.contains("ERROR")) {
+                            geoCoding = "Missing GeoCoding";
                         }
+                        String geoDate = HelperMethods.ConvertEPOCHTimeLong(location.getGeoDate());
+
+
+                        // age of geoDate - show differenr color for new and older dates
+                        BitmapDescriptor bitmapDescriptor = null;
+                        int ageType = HelperMethods.JudgeAge(location.getGeoDate());
+                        String ageTypeString = "";
+                        switch (ageType) {
+                            case 1:
+                                // new max 1 day old
+                                bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+                                ageTypeString = "max 1 day old";
+                                break;
+                            case 2:
+                                // max 1 week old
+                                bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+                                ageTypeString = "max 1 week old";
+                                break;
+                            case 3:
+                                // older than 1 week
+                                bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
+                                ageTypeString = "older than 1 week";
+                                break;
+                            default:
+                                // default
+                                bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
+                                ageTypeString = "default";
+                        }
+
+                        Log.d(TAG, "Adding point to map item=" + i + " " +location.getGPSlat() + " " + location.getGPSlon() + " " + location.getGeoCoding() + " " + geoDate + " " + ageTypeString);
+
 
                         // Map - add point
                         mMap.addMarker(new MarkerOptions()
                                 .position(point)
-                                .title(descr)
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))); // color of icon
+                                .title(geoCoding)
+                                .snippet(geoDate)
+                                .icon(bitmapDescriptor));
 
 
                         // Map - move camera to center of Czech Rep
                         LatLng cameraPoint = new LatLng(49.8112336, 15.3535708);
                         float cameraZoomLevel = (float) 7.0;
-                        // Map -center and zoom camera
+                        // Map - center and zoom camera
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraPoint, cameraZoomLevel));
 
                         i++;
@@ -117,7 +149,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
         // call Async Job
         locationRepository.getLocations();
-
 
     }
 

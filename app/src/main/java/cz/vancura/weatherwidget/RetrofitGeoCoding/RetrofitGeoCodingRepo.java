@@ -46,45 +46,52 @@ public class RetrofitGeoCodingRepo {
                 int responseCode = response.code();
                 Log.d(TAG,"Retrofit Response code=" + responseCode);
 
-                String displayResponse = "";
+                try{
 
-                RetrofitGeoCodingPOJO apIresponsePOJO = response.body();
+                    String displayResponse = "";
 
-                List<RetrofitGeoCodingPOJO.Result> apIresponsePOJOresultsList = apIresponsePOJO.results;
+                    RetrofitGeoCodingPOJO apIresponsePOJO = response.body();
 
-                RetrofitGeoCodingPOJO.Result result = apIresponsePOJOresultsList.get(0);
-                String adress = result.formattedAddress;
-                displayResponse += adress;
-                Log.d(TAG, adress);
+                    List<RetrofitGeoCodingPOJO.Result> apIresponsePOJOresultsList = apIresponsePOJO.results;
 
-                // problem v jejich datech :
-                // pozice napr mesta neni na stalem miste v JSON response - pozice je lisi podle velikosti mesta, napr v Praze je na pozici cca 7, v Plzni cca 6 a v Oseku cca 5
-                // zacina se od nejnizsi jednotky - cislo ulice, ulice, ctrvt, mesto, kraj etc
-                // da se vyresit protoze v JSON je popis dat - ale i tak nedobry
-                // see https://stackoverflow.com/questions/27524422/get-definite-city-name-in-google-maps-reverse-geocoding
+                    RetrofitGeoCodingPOJO.Result result = apIresponsePOJOresultsList.get(0);
+                    String adress = result.formattedAddress;
+                    displayResponse += adress;
+                    Log.d(TAG, adress);
 
-
-                 /*
-                 Praha
-                 https://maps.googleapis.com/maps/api/geocode/json?latlng=50.0867132,14.4538156&key=AIzaSyBnqcCs485jaJz703mtwE4Zo-_nj6tDSnI
-                 result Roháčova 2-22, 130 00 Praha 3-Žižkov, Czechia
-
-                 Plzen
-                 https://maps.googleapis.com/maps/api/geocode/json?latlng=49.73843,13.3736367&key=AIzaSyBnqcCs485jaJz703mtwE4Zo-_nj6tDSnI
-                 result Soukenická 5, 301 00 Plzeň 3, Czechia
-
-                 Velky Osek
-                 https://maps.googleapis.com/maps/api/geocode/json?latlng=50.0986683,15.1862917&key=AIzaSyBnqcCs485jaJz703mtwE4Zo-_nj6tDSnI
-                 result U Železárny 616, 28151 Velký Osek, 281 51 Velký Osek, Czechia
-                  */
+                    // problem v jejich datech :
+                    // pozice napr mesta neni na stalem miste v JSON response - pozice je lisi podle velikosti mesta, napr v Praze je na pozici cca 7, v Plzni cca 6 a v Oseku cca 5
+                    // zacina se od nejnizsi jednotky - cislo ulice, ulice, ctrvt, mesto, kraj etc
+                    // da se vyresit protoze v JSON je popis dat - ale i tak nedobry
+                    // see https://stackoverflow.com/questions/27524422/get-definite-city-name-in-google-maps-reverse-geocoding
 
 
-                Log.d(TAG, displayResponse);
-                GeoLocationResult = displayResponse;
+                     /*
+                     Praha
+                     https://maps.googleapis.com/maps/api/geocode/json?latlng=50.0867132,14.4538156&key=AIzaSyBnqcCs485jaJz703mtwE4Zo-_nj6tDSnI
+                     result Roháčova 2-22, 130 00 Praha 3-Žižkov, Czechia
 
-                // callback - finished
-                Log.d(TAG, "RetrofitGeoTranlateAsyns work done - calling callback ..");
-                retrofitGeoCodingInterface.OnRetrofitCompleted();
+                     Plzen
+                     https://maps.googleapis.com/maps/api/geocode/json?latlng=49.73843,13.3736367&key=AIzaSyBnqcCs485jaJz703mtwE4Zo-_nj6tDSnI
+                     result Soukenická 5, 301 00 Plzeň 3, Czechia
+
+                     Velky Osek
+                     https://maps.googleapis.com/maps/api/geocode/json?latlng=50.0986683,15.1862917&key=AIzaSyBnqcCs485jaJz703mtwE4Zo-_nj6tDSnI
+                     result U Železárny 616, 28151 Velký Osek, 281 51 Velký Osek, Czechia
+                      */
+
+
+                    Log.d(TAG, displayResponse);
+                    GeoLocationResult = displayResponse;
+
+                    // callback - finished
+                    Log.d(TAG, "RetrofitGeoTranlateAsyns work done - calling callback ..");
+                    retrofitGeoCodingInterface.OnRetrofitCompleted();
+
+                }catch (Exception e){
+                    Log.d(TAG, "ERROR at line " + e.getStackTrace()[0].getLineNumber() + " content=" + e.getLocalizedMessage());
+                    Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
 
             }
 

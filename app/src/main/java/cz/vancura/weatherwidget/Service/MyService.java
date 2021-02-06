@@ -35,7 +35,8 @@ import cz.vancura.weatherwidget.model.Location;
 import cz.vancura.weatherwidget.model.roomdb.LocationRepository;
 import cz.vancura.weatherwidget.model.roomdb.ReadAsyncTaskInterface;
 
-import static cz.vancura.weatherwidget.Helper.HelperMethods.ConvertEPOCHTime;
+import static cz.vancura.weatherwidget.Helper.HelperMethods.ConvertEPOCHTimeDouble;
+import static cz.vancura.weatherwidget.Helper.HelperMethods.ConvertEPOCHTimeLong;
 import static cz.vancura.weatherwidget.Helper.HelperMethods.GPSLatitude;
 import static cz.vancura.weatherwidget.Helper.HelperMethods.GPSLongtitude;
 import static cz.vancura.weatherwidget.Helper.HelperMethods.GPSTime;
@@ -110,7 +111,7 @@ public class MyService extends IntentService implements OnLocationInterface, Ret
                     Log.d(TAG, "onLocationCompleted - GPS position is valid");
 
                     String GPSLocation = "GPS Lat = " + GPSLatitude + "\n" + "GPS Long = " + GPSLongtitude + "\n";
-                    String GPSTimeString = "GPS time = " + ConvertEPOCHTime(GPSTime);
+                    String GPSTimeString = "GPS time = " + ConvertEPOCHTimeDouble(GPSTime);
                     StringToWidgetGPS = GPSLocation + GPSTimeString;
 
 
@@ -133,7 +134,7 @@ public class MyService extends IntentService implements OnLocationInterface, Ret
                                     // none - callback is needed for read from dB only
                                 }
                             });
-                            locationRepository.insertLocation(new Location(GPSLatitude, GPSLongtitude,StringToWidgetGeoloc));
+                            locationRepository.insertLocation(new Location(GPSLatitude, GPSLongtitude,StringToWidgetGeoloc, HelperMethods.GetCurrentDate()));
 
                             // db - check after insert - read id - only for debug
                             locationRepository.getLocations();
@@ -156,7 +157,7 @@ public class MyService extends IntentService implements OnLocationInterface, Ret
                                     // none - callback is needed for read from dB only
                                 }
                             });
-                            locationRepository.insertLocation(new Location(GPSLatitude, GPSLongtitude,StringToWidgetGeoloc));
+                            locationRepository.insertLocation(new Location(GPSLatitude, GPSLongtitude,StringToWidgetGeoloc, HelperMethods.GetCurrentDate()));
 
                             // refresh Widget
                             UpdateWidgetGUI();
@@ -257,7 +258,7 @@ public class MyService extends IntentService implements OnLocationInterface, Ret
             remoteViews = new RemoteViews(context.getPackageName(), R.layout.weather_app_widget);
 
             long currentTime = System.currentTimeMillis();
-            String currentTimeString = ConvertEPOCHTime(currentTime);
+            String currentTimeString = ConvertEPOCHTimeLong(currentTime);
 
             Log.d(TAG, "updating widget GUI ..");
 
