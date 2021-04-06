@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class HelperMethods {
 
@@ -43,7 +44,7 @@ public class HelperMethods {
 
         DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.GERMAN);
         String result = format.format(input);
-        Log.d(TAG,"ConvertEPOCHTime returns " + result);
+        //Log.d(TAG,"ConvertEPOCHTime returns " + result);
         return result;
     }
 
@@ -58,6 +59,24 @@ public class HelperMethods {
 
     }
 
+    // Convert long time to days, hours, min, secs
+    public static String HowOldTime(long inputMilisec){
+
+        String result = "";
+
+        long seconds = inputMilisec / 1000;
+        int day = (int)TimeUnit.SECONDS.toDays(seconds);
+        long hours = TimeUnit.SECONDS.toHours(seconds) - (day *24);
+        long minute = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds)* 60);
+        long second = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) *60);
+
+        result = day + "days " + hours + "hours " + minute + "min " + second + "sec";
+
+        //Log.d(TAG, "HowOldTime input =" + inputMilisec +" returns " + result);
+        return result;
+
+    }
+
 
     // according to timestamp - judge how old it is - for icon color in map
     public static int JudgeAge(Long dateInput){
@@ -66,7 +85,7 @@ public class HelperMethods {
 
         long dateNow = GetCurrentDate();
         long diff = dateNow - dateInput;
-        Log.d(TAG, "JudgeAge - diff=" + diff);
+        //Log.d(TAG, "JudgeAge - diff=" + diff);
 
         // 1 Day = 86,400,000 Milliseconds
         // 7 Days = 604,800,000 Milliseconds
@@ -81,7 +100,7 @@ public class HelperMethods {
             result = 3;
         }
 
-        Log.d(TAG, "JudgeAge - result=" + result);
+        //Log.d(TAG, "JudgeAge - result=" + result);
         return result;
 
     }
@@ -94,7 +113,7 @@ public class HelperMethods {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         boolean result = netInfo != null && netInfo.isConnectedOrConnecting();
-        Log.d(TAG, "isOnlineTest() returns result2=" + result);
+        //Log.d(TAG, "isOnlineTest() returns result2=" + result);
 
         return result;
     }
@@ -181,12 +200,18 @@ public class HelperMethods {
             case "thunderstorm":
                 url = "https://openweathermap.org/img/wn/11d@2x.png";
                 break;
+            case "mist":
+                url = "https://openweathermap.org/img/wn/50d@2x.png";
+                break;
+            case "fog":
+                url = "https://openweathermap.org/img/wn/50d@2x.png";
+                break;
             default:
                 url = "https://openweathermap.org/themes/openweathermap/assets/img/logo_white_cropped.png";
         }
 
 
-        Log.d(TAG, "GiveMeIcon - input=" + input + " output=" + url);
+        //Log.d(TAG, "GiveMeIcon - input=" + input + " output=" + url);
         return url;
     }
 

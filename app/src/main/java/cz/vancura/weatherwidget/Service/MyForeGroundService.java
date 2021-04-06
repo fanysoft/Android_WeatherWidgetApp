@@ -9,10 +9,12 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.RemoteViews;
 
 import androidx.annotation.RequiresApi;
@@ -46,6 +48,7 @@ import static cz.vancura.weatherwidget.Helper.HelperMethods.GPSLongtitude;
 import static cz.vancura.weatherwidget.Helper.HelperMethods.GPSTime;
 import static cz.vancura.weatherwidget.RetrofitGeoCoding.RetrofitGeoCodingRepo.GeoLocationResult;
 import static cz.vancura.weatherwidget.RetrofitWeather.RetrofitWeatherRepo.myWeahterList;
+import static cz.vancura.weatherwidget.WeatherAppWidget.refreshedTimes;
 
 /*
 Service For Android 8.0 and newer devices - startForegroundService
@@ -71,6 +74,7 @@ public class MyForeGroundService extends Service {
     private static Boolean isOnline;
 
     RemoteViews remoteViews;
+    RelativeLayout relativeLayout;
     AppWidgetManager appWidgetManager;
     int[] allWidgetIds;
 
@@ -325,20 +329,64 @@ public class MyForeGroundService extends Service {
 
             remoteViews = new RemoteViews(this.getApplicationContext().getPackageName(), R.layout.weather_app_widget);
 
-            long currentTime = System.currentTimeMillis();
-            String currentTimeString = HelperMethods.ConvertEPOCHTimeLong(currentTime);
-
             Log.d(TAG, "updating widget GUI ..");
 
-
-            // TODO ERROR - always when user unlock device after long sleep
+            // Error handling
+            // geoCoding and OpenWeather throws always ERROR when user unlock device after long sleep
             // can be hadled - show Error only after some time - like if it does not dissapear after 1hour from wake-up or so
+            String text1 = "";
+            String text2 = "";
+            String text3 = "";
 
+            if (WeatherAppWidget.RefreshTimeLast != 0){
+                // with history
+
+                long oldTime = WeatherAppWidget.RefreshTimeCurrent - WeatherAppWidget.RefreshTimeLast;
+                String oldTimeString = HelperMethods.HowOldTime(oldTime);
+
+                // GUI - last refresh time
+                String currentTimeString = HelperMethods.ConvertEPOCHTimeLong(WeatherAppWidget.RefreshTimeCurrent);
+                String lastTimeString = HelperMethods.ConvertEPOCHTimeLong(WeatherAppWidget.RefreshTimeLast);
+
+                text1 = "Current refresh =" + currentTimeString;
+                text2 = "Last refresh =" + lastTimeString;
+                text3 =  oldTimeString + " ago (" + refreshedTimes + "x)";
+
+                // 60 minutes = 3 200 000 milliseconds
+                if (oldTime > 3200000) {
+                    // Last widget refresh was more than 30min ago
+                    Log.d(TAG, "Last widget resfesh was more than 30min ago");
+                    // do not show error - keep GUI
+
+                    // change background color
+                    remoteViews.setInt(R.id.widgetLayout, "setBackgroundResource", R.color.red);
+
+                }else{
+                    // refresh layout with fresh data
+                    Log.d(TAG, "Last widget resfesh was less than 30min ago");
+
+                    // change background color
+                    remoteViews.setInt(R.id.widgetLayout, "setBackgroundResource", R.color.green);
+
+                }
+
+
+            }else{
+                // no history - after start
+
+                // GUI - last refresh time
+                String currentTimeString = HelperMethods.ConvertEPOCHTimeLong(WeatherAppWidget.RefreshTimeCurrent);
+                text1 = "Current refresh =" + currentTimeString;
+                text2 = "";
+                text3 = "";
+
+            }
+
+            // Last update
+            remoteViews.setTextViewText(R.id.appwidget_text2, text1 + "\n" + text2 + "\n" + text3);
 
             // title
             remoteViews.setTextViewText(R.id.appwidget_text1, "MyForegroundService");
-            // last refresh time
-            remoteViews.setTextViewText(R.id.appwidget_text2, "Last widget refresh = " + currentTimeString);
             // GPS
             remoteViews.setTextViewText(R.id.appwidget_text3, StringToWidgetGPS);
             // GeoCoding
@@ -430,6 +478,7 @@ public class MyForeGroundService extends Service {
                 }
 
             }
+
 
 
             // Register an onClickListener

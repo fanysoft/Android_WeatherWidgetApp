@@ -5,12 +5,14 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import cz.vancura.weatherwidget.Helper.HelperMethods;
 import cz.vancura.weatherwidget.Service.MyForeGroundService;
 import cz.vancura.weatherwidget.Service.MyService;
 
@@ -24,6 +26,14 @@ public class WeatherAppWidget extends AppWidgetProvider{
     static AppWidgetManager appWidgetManagerGlobal;
     static RemoteViews remoteViewsGlobal;
     static int appWidgetIdGlobal;
+
+    public static long RefreshTimeCurrent = 0; // refresh time - last
+    public static long RefreshTimeLast = 0; // refresh time - last +1
+    public static int refreshedTimes;
+
+    static SharedPreferences sharedPref;
+    static SharedPreferences.Editor sharedPrefEditor;
+
 
 
     @Override
@@ -70,6 +80,32 @@ public class WeatherAppWidget extends AppWidgetProvider{
     public void onReceive(Context context, Intent intent) {
 
         Log.d(TAG, "onReceive");
+
+        // Shared Preferences
+        sharedPref = context.getSharedPreferences("NAME", 0);
+        // SharedPreferences Editor
+        sharedPrefEditor = sharedPref.edit();
+
+
+        // Refresh time - last = now -1 = keep Last as archive of Current - persistence in SharedPref
+        RefreshTimeLast = sharedPref.getLong("RefreshTimeLast2", 0);
+        Log.d(TAG, "RefreshTimeLast=" + RefreshTimeLast + " " + HelperMethods.ConvertEPOCHTimeLong(RefreshTimeLast));
+
+        // Refresh time - now
+        RefreshTimeCurrent = HelperMethods.GetCurrentDate();
+        Log.d(TAG, "RefreshTimeCurrent=" + RefreshTimeCurrent + " " + HelperMethods.ConvertEPOCHTimeLong(RefreshTimeCurrent));
+
+        // save RefreshTimeLast
+        sharedPrefEditor.putLong("RefreshTimeLast2", RefreshTimeCurrent);
+        sharedPrefEditor.apply();
+
+        // Refresh - total nr
+        refreshedTimes = sharedPref.getInt("RefreshedTimes", 0);
+        refreshedTimes++;
+        sharedPrefEditor.putInt("RefreshedTimes", refreshedTimes);
+        sharedPrefEditor.apply();
+        Log.d(TAG, "RefreshedTimes=" + refreshedTimes + "x");
+
 
         // global widget variables - init
         appWidgetManagerGlobal = AppWidgetManager.getInstance(context.getApplicationContext());

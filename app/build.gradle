@@ -8,8 +8,8 @@ android {
         applicationId "cz.vancura.weatherwidget"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -17,15 +17,24 @@ android {
     buildTypes {
         debug{
             buildConfigField 'String', "myAPIkeyWeather", OpenWeatherApiKey
-            resValue "string", "myAPIkeyGoogleMap", Google_maps_key
+            resValue "string", "GoogleMapsApiKey", mapskey
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // secret key OpenWeather.com - replace by yours
             buildConfigField 'String', "myAPIkeyWeather", OpenWeatherApiKey
-            resValue "string", "myAPIkeyGoogleMap", Google_maps_key
+            // secret key GoogleMaps - replace by yours
+            resValue "string", "GoogleMapsApiKey", mapskey
         }
     }
+
+    // retrofit
+    compileOptions {
+        targetCompatibility = "8"
+        sourceCompatibility = "8"
+    }
+
 }
 
 dependencies {
@@ -34,10 +43,10 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
     // GPS location
-    implementation 'com.google.android.gms:play-services-location:17.1.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
 
     // Retrofit http
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
@@ -54,9 +63,9 @@ dependencies {
 
 
     // SnackBar
-    implementation "com.google.android.material:material:1.3.0-rc01"
+    implementation "com.google.android.material:material:1.4.0-alpha02"
 
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 

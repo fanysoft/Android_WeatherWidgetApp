@@ -19,6 +19,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import cz.vancura.weatherwidget.Helper.HelperMethods;
 import cz.vancura.weatherwidget.model.Location;
 import cz.vancura.weatherwidget.model.roomdb.LocationRepository;
@@ -58,6 +61,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap = googleMap;
 
+
+        // Map - move camera to center of Czech Rep
+        LatLng cameraPoint = new LatLng(49.8112336, 15.3535708);
+        float cameraZoomLevel = (float) 7.0;
+        // Map - center and zoom camera
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraPoint, cameraZoomLevel));
+
+
         // Load data from RoomDB to locationList - Async with callback
         LocationRepository locationRepository = new LocationRepository(this, new ReadAsyncTaskInterface() {
             @Override
@@ -67,6 +78,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 int listSize = locationList.size();
                 Log.d(TAG, "locationList.size=" + listSize);
 
+                List<Location> listForMap = new ArrayList<>();
+
                 if (listSize > 0) {
                     // some data already collected by widget
 
@@ -74,12 +87,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     for (Location location : locationList) {
 
                         LatLng point = new LatLng(location.getGPSlat(), location.getGPSlon());
+
+                        // geocoding
                         String geoCoding = location.getGeoCoding();
                         if (geoCoding.contains("Error") || geoCoding.contains("ERROR")) {
                             geoCoding = "Missing GeoCoding";
                         }
-                        String geoDate = HelperMethods.ConvertEPOCHTimeLong(location.getGeoDate());
 
+                        // date
+                        String geoDate = HelperMethods.ConvertEPOCHTimeLong(location.getGeoDate());
 
                         // age of geoDate - show differenr color for new and older dates
                         BitmapDescriptor bitmapDescriptor = null;
@@ -107,22 +123,56 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 ageTypeString = "default";
                         }
 
-                        Log.d(TAG, "Adding point to map item=" + i + " " +location.getGPSlat() + " " + location.getGPSlon() + " " + location.getGeoCoding() + " " + geoDate + " " + ageTypeString);
+                        Log.d(TAG, "point from dB item=" + i + " " +location.getGPSlat() + " " + location.getGPSlon() + " getGeoCoding=" + location.getGeoCoding() + " geoDate=" + geoDate + " age=" + ageTypeString);
 
 
-                        // Map - add point
-                        mMap.addMarker(new MarkerOptions()
-                                .position(point)
-                                .title(geoCoding)
-                                .snippet(geoDate)
-                                .icon(bitmapDescriptor));
+                        // add to map only unique points
+                        // step 1 - read from room db only unique GPS locations - done
+                        // step 2 - remove last 2 digits from GPS - to remove very close locations like home - done
+
+                        boolean showInMap = true;
+
+                        // 1 original location
+                        double pointLatFull = location.getGPSlat();
+                        double pointLonFull = location.getGPSlon();
+
+                        // 2. rounded location - removed 2 digits
+                        double pointLatRound = (int)(pointLatFull * 100) / 100d;
+                        double pointLonRound = (int)(pointLonFull * 100) / 100d;
+                        Log.d(TAG, "point from dB item=" + i + " rounded location " + pointLatRound + " " +  pointLonRound);
 
 
-                        // Map - move camera to center of Czech Rep
-                        LatLng cameraPoint = new LatLng(49.8112336, 15.3535708);
-                        float cameraZoomLevel = (float) 7.0;
-                        // Map - center and zoom camera
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraPoint, cameraZoomLevel));
+                        // 3. is in List already ?
+                        // loop via list
+                        if (listForMap.size()!= 0) {
+                            for (Location location1 : listForMap) {
+
+                                if ((location1.getGPSlat() == pointLatRound) && (location1.getGPSlon() == pointLonRound)) {
+                                    // already there
+                                    showInMap = false;
+                                    // do not add to list
+                                }
+                            }
+                        }
+
+
+                        if (showInMap) {
+                            Log.d(TAG, "point - is unique - show in map");
+
+                            // add to list
+                            listForMap.add(new Location(pointLatRound, pointLonRound, location.getGeoCoding(), location.getGeoDate()));
+
+                            // Map - add point
+                            mMap.addMarker(new MarkerOptions()
+                                    .position(point)
+                                    .title(geoCoding)
+                                    .snippet(geoDate)
+                                    .icon(bitmapDescriptor));
+
+                        }else{
+                            Log.d(TAG, "point - not adding to map - similar point is already there");
+                        }
+
 
                         i++;
 

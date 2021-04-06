@@ -142,7 +142,9 @@ public class RetrofitWeatherRepo {
 
                 String error = "Retrofit Error " + t.getLocalizedMessage();
                 Log.e(TAG, error);
-                Toast.makeText(context, error, Toast.LENGTH_LONG).show();
+
+                //Toast.makeText(context, error, Toast.LENGTH_LONG).show();
+
                 call.cancel();
 
                 // callback - finished with ERROR

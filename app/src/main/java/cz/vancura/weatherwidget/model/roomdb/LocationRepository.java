@@ -60,7 +60,7 @@ public class LocationRepository {
 
         @Override
         protected List<Location> doInBackground(Void... voids) {
-            return db.locationDao().getLocations();
+            return db.locationDao().getUniqueLocations();
         }
 
         @Override
